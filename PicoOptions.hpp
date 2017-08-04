@@ -5,21 +5,61 @@
 
 class OptionParser {
 public:
+        /**
+         * Parses the options passed to the program. Each option in 'argv' gets
+         * compared with the user added options. If it is found and has an
+         * argument, the argument gets parsed aswell.
+         *
+         * @param argc The option cound
+         * @param argv The actual options
+         *
+         * @return true if successful
+         */
         bool parse(int& argc, char* argv[]);
 
+        /**
+         * Adds an option to the internal 'options' list that is used by the
+         * 'parse' function.
+         *
+         * @param name The name of the option
+         * @param hasArgument Indicates whether the option takes an argument
+         */
         void add(const std::string& name, bool hasArgument);
 
+        /**
+         * Checks whether an option exists.
+         *
+         * @param name The name of the option
+         *
+         * @return true if the option exists
+         */
         bool has(const std::string& name);
 
+        /**
+         * Returns the argument of an option. If an option doesn't exist or it
+         * doesn't take an argument, an empty string is returned.
+         * Use 'has' to check whether an option exists.
+         *
+         * @param name The name of the option
+         *
+         * @return The argument
+         */
         std::string popArgument(const std::string& name);
 
 private:
+        /**
+         * The internal representation of an option. If an option doesn't take
+         * an argument, 'argument' contains an empty string.
+         */
         struct Option {
                 std::string name;
                 std::string argument;
                 bool hasArgument;
         };
 
+        /**
+         * A helper struct to find an option by its name.
+         */
         struct Compare {
                 Compare(const std::string& str)
                         : str(str)
@@ -34,8 +74,23 @@ private:
                 std::string str;
         };
 
+        /**
+         * Retrieves the name of the option in 'token'. Only works with short
+         * options, e.g. '-v'.
+         *
+         * @param token The token to parse
+         *
+         * @return The name of the option
+         */
         std::string parseName(const std::string& token);
 
+        /**
+         * Checks whether 'token' starts with a '-' character.
+         *
+         * @param The token to check
+         *
+         * @return True if the token isn't empty and starts with '-'
+         */
         bool startsWithDash(const std::string& token);
 
         std::vector<Option> options;
