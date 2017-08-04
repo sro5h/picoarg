@@ -2,6 +2,7 @@
 #define _PICO_OPTIONS_HPP
 
 #include <vector>
+#include <algorithm>
 
 class OptionParser {
 public:
