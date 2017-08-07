@@ -1,5 +1,5 @@
-#ifndef _PICO_OPTIONS_HPP
-#define _PICO_OPTIONS_HPP
+#ifndef _PICO_ARG_HPP
+#define _PICO_ARG_HPP
 
 #include <vector>
 #include <algorithm>
@@ -98,9 +98,9 @@ private:
         std::vector<Option> parsed;
 };
 
-#endif // _PICO_OPTIONS_HPP
+#endif // _PICO_ARG_HPP
 
-#ifdef PICOOPTIONS_IMPL
+#ifdef PICOARG_IMPL
 
 bool OptionParser::parse(int& argc, char* argv[])
 {
@@ -215,4 +215,4 @@ bool OptionParser::startsWithDash(const std::string& token)
         return token.empty() ? false : token[0] == '-';
 }
 
-#endif // PICOOPTIONS_IMPL
+#endif // PICOARG_IMPL

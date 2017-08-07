@@ -1,7 +1,7 @@
 #include <iostream>
 
-#define PICOOPTIONS_IMPL
-#include "PicoOptions.hpp"
+#define PICOARG_IMPL
+#include "picoarg.hpp"
 
 int main(int argc, char* argv[])
 {
