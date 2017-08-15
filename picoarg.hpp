@@ -23,9 +23,9 @@ public:
          * 'parse' function.
          *
          * @param name The name of the option
-         * @param hasArgument Indicates whether the option takes an argument
+         * @param expectsArg Indicates whether the option takes an argument
          */
-        void add(const std::string& name, bool hasArgument);
+        void add(const std::string& name, bool expectsArg);
 
         /**
          * Checks whether an option exists.
@@ -55,7 +55,7 @@ private:
         struct Option {
                 std::string name;
                 std::string argument;
-                bool hasArgument;
+                bool expectsArg;
         };
 
         /**
@@ -156,7 +156,7 @@ bool OptionParser::parse(int& argc, char* argv[])
 #endif
 
                 // Option doesn't expect an argument but an argument was found
-                if (argument != "" && !option.hasArgument) {
+                if (argument != "" && !option.expectsArg) {
                         // TODO: Error no argument expected
                         std::cout << "Option '" << option.name
                                 << "' doesn't expect an argument" << std::endl;
@@ -164,7 +164,7 @@ bool OptionParser::parse(int& argc, char* argv[])
                 }
 
                 // Option expects an argument but no argument was found
-                if (argument == "" && option.hasArgument) {
+                if (argument == "" && option.expectsArg) {
                         // TODO: Error no argument found
                         std::cout << "Option '" << option.name
                                 << "' expects an argument" << std::endl;
@@ -182,9 +182,9 @@ bool OptionParser::parse(int& argc, char* argv[])
         return true;
 }
 
-void OptionParser::add(const std::string& name, bool hasArgument = false)
+void OptionParser::add(const std::string& name, bool expectsArg = false)
 {
-        options.push_back({ name, "", hasArgument });
+        options.push_back({ name, "", expectsArg });
 }
 
 bool OptionParser::has(const std::string& name)
