@@ -17,7 +17,7 @@ int main(int argc, char* argv[])
                 std::cout << "version 0.0.1" << std::endl;
         }
 
-        if (parser.has("-f")) {
+        while (parser.has("-f")) {
                 std::string filename = parser.popArgument("-f");
                 std::cout << "processing '" << filename << "'" << std::endl;
         }

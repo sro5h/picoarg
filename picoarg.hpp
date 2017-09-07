@@ -200,9 +200,10 @@ std::string OptionParser::popArgument(const std::string& name)
         auto it = std::find_if(parsed.begin(), parsed.end(),
                         Compare(name));
 
-        // TODO: Pop option from 'options' if found
+        std::string arg = it == parsed.end() ? "" : (*it).argument;
+        parsed.erase(it);
 
-        return it == parsed.end() ? "" : (*it).argument;
+        return arg;
 }
 
 std::string OptionParser::parseName(const std::string& token)
