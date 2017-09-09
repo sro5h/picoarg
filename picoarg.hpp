@@ -40,16 +40,16 @@ public:
          * @param name The name of the option
          * @param expectsArg Indicates whether the option takes an argument
          */
-        void add(const std::string& name, bool expectsArg);
+        void add(const char& name, bool expectsArg);
 
         /**
          * Checks whether an option exists.
          *
          * @param name The name of the option
          *
-         * @return true if the option exists
+         * @return True if the option exists
          */
-        bool has(const std::string& name);
+        bool has(const char& name);
 
         /**
          * Returns the argument of an option. If an option doesn't exist or it
@@ -60,7 +60,7 @@ public:
          *
          * @return The argument
          */
-        std::string popArgument(const std::string& name);
+        std::string popArgument(const char& name);
 
 private:
         /**
@@ -68,7 +68,7 @@ private:
          * an argument, 'argument' contains an empty string.
          */
         struct Option {
-                std::string name;
+                char name;
                 std::string argument;
                 bool expectsArg;
         };
@@ -77,17 +77,17 @@ private:
          * A helper struct to find an option by its name.
          */
         struct Compare {
-                Compare(const std::string& str)
-                        : str(str)
+                Compare(const char& name)
+                        : name(name)
                 {
                 }
 
                 bool operator()(const Option& option)
                 {
-                        return option.name == str;
+                        return option.name == name;
                 }
 
-                std::string str;
+                char name;
         };
 
         /**
@@ -98,7 +98,7 @@ private:
          *
          * @return The name of the option
          */
-        std::string parseName(const std::string& token);
+        char parseName(const std::string& token);
 
         /**
          * Checks whether 'token' starts with a '-' character.
@@ -137,7 +137,7 @@ bool OptionParser::parse(int& argc, char* argv[])
                         return false;
                 }
 
-                std::string name = parseName(token);
+                char name = parseName(token);
                 std::string argument;
 
                 // Try to find the option by name
@@ -146,14 +146,14 @@ bool OptionParser::parse(int& argc, char* argv[])
 
                 if (optionIt == options.end()) {
                         // TODO: Error unknown option
-                        std::cout << "Unknown option " << name << std::endl;
+                        std::cout << "Unknown option '-" << name << "'" << std::endl;
                         return false;
                 }
 
                 Option option = *optionIt;
 
 #ifdef PICOOPTIONS_DEBUG
-                std::cout << "Found option '" << option.name << "'"
+                std::cout << "Found option '-" << option.name << "'"
                         << std::endl;
 #endif
 
@@ -181,7 +181,7 @@ bool OptionParser::parse(int& argc, char* argv[])
                 // Option expects an argument but no argument was found
                 if (argument == "" && option.expectsArg) {
                         // TODO: Error no argument found
-                        std::cout << "Option '" << option.name
+                        std::cout << "Option '-" << option.name
                                 << "' expects an argument" << std::endl;
                         return false;
                 }
@@ -197,12 +197,12 @@ bool OptionParser::parse(int& argc, char* argv[])
         return true;
 }
 
-void OptionParser::add(const std::string& name, bool expectsArg = false)
+void OptionParser::add(const char& name, bool expectsArg = false)
 {
         options.push_back({ name, "", expectsArg });
 }
 
-bool OptionParser::has(const std::string& name)
+bool OptionParser::has(const char& name)
 {
         auto it = std::find_if(parsed.begin(), parsed.end(),
                         Compare(name));
@@ -210,7 +210,7 @@ bool OptionParser::has(const std::string& name)
         return it != parsed.end();
 }
 
-std::string OptionParser::popArgument(const std::string& name)
+std::string OptionParser::popArgument(const char& name)
 {
         auto it = std::find_if(parsed.begin(), parsed.end(),
                         Compare(name));
@@ -221,9 +221,9 @@ std::string OptionParser::popArgument(const std::string& name)
         return arg;
 }
 
-std::string OptionParser::parseName(const std::string& token)
+char OptionParser::parseName(const std::string& token)
 {
-        return token.substr(0, 2);
+        return token[1];
 }
 
 bool OptionParser::startsWithDash(const std::string& token)
