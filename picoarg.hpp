@@ -13,8 +13,8 @@
         1.0.1 (09.09.2017) allow arguments multiple times
 */
 
-#ifndef _PICO_ARG_HPP
-#define _PICO_ARG_HPP
+#ifndef _PICOARG_HPP
+#define _PICOARG_HPP
 
 #include <vector>
 #include <algorithm>
@@ -113,7 +113,7 @@ private:
         std::vector<Option> parsed;
 };
 
-#endif // _PICO_ARG_HPP
+#endif // _PICOARG_HPP
 
 #ifdef PICOARG_IMPL
 
