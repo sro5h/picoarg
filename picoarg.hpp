@@ -1,5 +1,5 @@
 /*
-   picoarg.hpp - 1.1.0
+   picoarg.hpp - 1.1.1
 
    Author:
         Paul Meffle
@@ -13,6 +13,7 @@
         1.0.1 (09.09.2017) allow values multiple times
         1.0.2 (09.09.2017) use chars for option keys
         1.1.0 (13.09.2017) remove parsing of inline values
+        1.1.1 (13.09.2017) apply new naming convention
 */
 
 #ifndef _PICOARG_HPP
