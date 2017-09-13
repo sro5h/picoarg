@@ -102,13 +102,14 @@ private:
         char parseName(const std::string& token);
 
         /**
-         * Checks whether 'token' starts with a '-' character.
+         * Checks whether 'token' is two characters long and starts with a '-'
+         * character.
          *
          * @param The token to check
          *
-         * @return True if the token isn't empty and starts with '-'
+         * @return True if the token is two characters long and starts with '-'
          */
-        bool startsWithDash(const std::string& token);
+        bool isOption(const std::string& token);
 
         std::vector<Option> options;
         std::vector<Option> parsed;
@@ -124,73 +125,38 @@ bool OptionParser::parse(int& argc, char* argv[])
 
         for(auto it = args.begin(); it < args.end(); ++it) {
                 std::string token = *it;
-                std::string next;
+                std::string next = std::next(it) == args.end() ? ""
+                        : *std::next(it);
 
-                // Get next token if exists
-                if (std::next(it) != args.end()) {
-                        next = *std::next(it);
-                }
-
-                if (!startsWithDash(token)) {
-                        // TODO: Error option expected
-                        std::cout << "Expected an option, found " << token
-                                << std::endl;
+                if (!isOption(token)) {
+                        std::cout << "Expected an option, found '" << token
+                                << "'." << std::endl;
                         return false;
                 }
 
-                char name = parseName(token);
-                std::string argument;
+                char name = token[1];
 
-                // Try to find the option by name
-                auto optionIt = std::find_if(options.begin(),
-                                options.end(), Compare(name));
+                auto optionIt = std::find_if(options.begin(), options.end(),
+                                Compare(name));
 
                 if (optionIt == options.end()) {
-                        // TODO: Error unknown option
                         std::cout << "Unknown option '-" << name << "'" << std::endl;
                         return false;
                 }
 
                 Option option = *optionIt;
 
-#ifdef PICOOPTIONS_DEBUG
-                std::cout << "Found option '-" << option.name << "'"
-                        << std::endl;
-#endif
+                if (option.expectsArg && (isOption(next) || next.empty())) {
+                                std::cout << "Option '-" << name
+                                        << "' expects argument." << std::endl;
+                                return false;
+                }
 
-                // Has inline argument or is next an argument?
-                if (token.length() > 2) {
-                        argument = token.substr(2);
-                } else if (!startsWithDash(next)) {
-                        argument = next;
-                        // Skip next element
+                if (option.expectsArg && !isOption(next)) {
+                        option.argument = next;
                         ++it;
                 }
 
-#ifdef PICOOPTIONS_DEBUG
-                std::cout << "Found argument '" << argument << "'" << std::endl;
-#endif
-
-                // Option doesn't expect an argument but an argument was found
-                if (argument != "" && !option.expectsArg) {
-                        // TODO: Error no argument expected
-                        std::cout << "Option '" << option.name
-                                << "' doesn't expect an argument" << std::endl;
-                        return false;
-                }
-
-                // Option expects an argument but no argument was found
-                if (argument == "" && option.expectsArg) {
-                        // TODO: Error no argument found
-                        std::cout << "Option '-" << option.name
-                                << "' expects an argument" << std::endl;
-                        return false;
-                }
-
-                // Store the argument
-                option.argument = argument;
-
-                // Add to parsed options
                 parsed.push_back(option);
         }
 
@@ -227,9 +193,9 @@ char OptionParser::parseName(const std::string& token)
         return token[1];
 }
 
-bool OptionParser::startsWithDash(const std::string& token)
+bool OptionParser::isOption(const std::string& token)
 {
-        return token.empty() ? false : token[0] == '-';
+        return (token.size() == 2 && token[0] == '-');
 }
 
 #endif // PICOARG_IMPL
