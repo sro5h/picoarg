@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
         }
 
         while (parser.has('f')) {
-                std::string filename = parser.popArgument('f');
+                std::string filename = parser.popValue('f');
                 std::cout << "processing '" << filename << "'" << std::endl;
         }
 

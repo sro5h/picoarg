@@ -10,9 +10,9 @@
 
    Revision history:
         1.0   (15.08.2017) initial release
-        1.0.1 (09.09.2017) allow arguments multiple times
-        1.0.2 (09.09.2017) use chars for option names
-        1.1.0 (13.09.2017) remove parsing of inline arguments
+        1.0.1 (09.09.2017) allow values multiple times
+        1.0.2 (09.09.2017) use chars for option keys
+        1.1.0 (13.09.2017) remove parsing of inline values
 */
 
 #ifndef _PICOARG_HPP
@@ -26,12 +26,12 @@ public:
         /**
          * Parses the options passed to the program. Each option in 'argv' gets
          * compared with the user added options. If it is found and has an
-         * argument, the argument gets parsed aswell.
+         * value, the value gets parsed aswell.
          *
-         * @param argc The option cound
+         * @param argc The option count
          * @param argv The actual options
          *
-         * @return true if successful
+         * @return True if successful
          */
         bool parse(int& argc, char* argv[]);
 
@@ -39,68 +39,58 @@ public:
          * Adds an option to the internal 'options' list that is used by the
          * 'parse' function.
          *
-         * @param name The name of the option
-         * @param expectsArg Indicates whether the option takes an argument
+         * @param key The name of the option
+         * @param expectsValue Indicates whether the option takes a value
          */
-        void add(const char& name, bool expectsArg);
+        void add(const char& key, bool expectsValue);
 
         /**
          * Checks whether an option exists.
          *
-         * @param name The name of the option
+         * @param key The name of the option
          *
          * @return True if the option exists
          */
-        bool has(const char& name);
+        bool has(const char& key);
 
         /**
-         * Returns the argument of an option. If an option doesn't exist or it
-         * doesn't take an argument, an empty string is returned.
+         * Returns the value of an option. If an option doesn't exist or it
+         * doesn't take a value, an empty string is returned.
          * Use 'has' to check whether an option exists.
          *
-         * @param name The name of the option
+         * @param key The name of the option
          *
-         * @return The argument
+         * @return The value
          */
-        std::string popArgument(const char& name);
+        std::string popValue(const char& key);
 
 private:
         /**
          * The internal representation of an option. If an option doesn't take
-         * an argument, 'argument' contains an empty string.
+         * a value, 'value' contains an empty string.
          */
         struct Option {
-                char name;
-                std::string argument;
-                bool expectsArg;
+                char key;
+                std::string value;
+                bool expectsValue;
         };
 
         /**
-         * A helper struct to find an option by its name.
+         * A helper struct to find an option by its key.
          */
         struct Compare {
-                Compare(const char& name)
-                        : name(name)
+                Compare(const char& key)
+                        : key(key)
                 {
                 }
 
                 bool operator()(const Option& option)
                 {
-                        return option.name == name;
+                        return option.key == key;
                 }
 
-                char name;
+                char key;
         };
-
-        /**
-         * Retrieves the name of the option in 'token'. Only works with short
-         * options, e.g. '-v'.
-         *
-         * @param token The token to parse
-         *
-         * @return The name of the option
-         */
-        char parseName(const std::string& token);
 
         /**
          * Checks whether 'token' is two characters long and starts with a '-'
@@ -135,26 +125,26 @@ bool OptionParser::parse(int& argc, char* argv[])
                         return false;
                 }
 
-                char name = token[1];
+                char key = token[1];
 
                 auto optionIt = std::find_if(options.begin(), options.end(),
-                                Compare(name));
+                                Compare(key));
 
                 if (optionIt == options.end()) {
-                        std::cout << "Unknown option '-" << name << "'" << std::endl;
+                        std::cout << "Unknown option '-" << key << "'" << std::endl;
                         return false;
                 }
 
                 Option option = *optionIt;
 
-                if (option.expectsArg && (isOption(next) || next.empty())) {
-                                std::cout << "Option '-" << name
-                                        << "' expects argument." << std::endl;
-                                return false;
+                if (option.expectsValue && (isOption(next) || next.empty())) {
+                        std::cout << "Missing value after '-" << key << "'."
+                                << std::endl;
+                        return false;
                 }
 
-                if (option.expectsArg && !isOption(next)) {
-                        option.argument = next;
+                if (option.expectsValue && !isOption(next)) {
+                        option.value = next;
                         ++it;
                 }
 
@@ -165,33 +155,28 @@ bool OptionParser::parse(int& argc, char* argv[])
         return true;
 }
 
-void OptionParser::add(const char& name, bool expectsArg = false)
+void OptionParser::add(const char& key, bool expectsValue = false)
 {
-        options.push_back({ name, "", expectsArg });
+        options.push_back({ key, "", expectsValue });
 }
 
-bool OptionParser::has(const char& name)
+bool OptionParser::has(const char& key)
 {
         auto it = std::find_if(parsed.begin(), parsed.end(),
-                        Compare(name));
+                        Compare(key));
 
         return it != parsed.end();
 }
 
-std::string OptionParser::popArgument(const char& name)
+std::string OptionParser::popValue(const char& key)
 {
         auto it = std::find_if(parsed.begin(), parsed.end(),
-                        Compare(name));
+                        Compare(key));
 
-        std::string arg = it == parsed.end() ? "" : (*it).argument;
+        std::string value = it == parsed.end() ? "" : (*it).value;
         parsed.erase(it);
 
-        return arg;
-}
-
-char OptionParser::parseName(const std::string& token)
-{
-        return token[1];
+        return value;
 }
 
 bool OptionParser::isOption(const std::string& token)
