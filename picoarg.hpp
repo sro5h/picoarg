@@ -1,5 +1,5 @@
 /*
-   picoarg.hpp - 1.0.2
+   picoarg.hpp - 1.1.0
 
    Author:
         Paul Meffle
@@ -12,6 +12,7 @@
         1.0   (15.08.2017) initial release
         1.0.1 (09.09.2017) allow arguments multiple times
         1.0.2 (09.09.2017) use chars for option names
+        1.1.0 (13.09.2017) remove parsing of inline arguments
 */
 
 #ifndef _PICOARG_HPP
