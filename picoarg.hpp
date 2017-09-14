@@ -117,8 +117,6 @@ bool OptionParser::parse(int& argc, char* argv[])
 
         for(auto it = args.begin(); it < args.end(); ++it) {
                 std::string token = *it;
-                std::string next = std::next(it) == args.end() ? ""
-                        : *std::next(it);
 
                 if (!isOption(token)) {
                         std::cout << "Expected an option, found '" << token
@@ -138,15 +136,14 @@ bool OptionParser::parse(int& argc, char* argv[])
 
                 Option option = *optionIt;
 
-                if (option.expectsValue && (isOption(next) || next.empty())) {
+                if (option.expectsValue && token.size() < 2) {
                         std::cout << "Missing value after '-" << key << "'."
                                 << std::endl;
                         return false;
                 }
 
-                if (option.expectsValue && !isOption(next)) {
-                        option.value = next;
-                        ++it;
+                if (option.expectsValue && token.size() > 2) {
+                        option.value = token.substr(2);
                 }
 
                 parsed.push_back(option);
@@ -182,7 +179,7 @@ std::string OptionParser::popValue(const char& key)
 
 bool OptionParser::isOption(const std::string& token)
 {
-        return (token.size() == 2 && token[0] == '-');
+        return (token.size() > 1 && token[0] == '-');
 }
 
 #endif // PICOARG_IMPL
