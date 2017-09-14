@@ -120,8 +120,8 @@ bool OptionParser::parse(int& argc, char* argv[])
                 std::string token = *it;
 
                 if (!isOption(token)) {
-                        std::cout << "Expected an option, found '" << token
-                                << "'" << std::endl;
+                        std::cout << argv[0] << ": expected an option, found '"
+                                << token << "'" << std::endl;
                         return false;
                 }
 
@@ -131,21 +131,22 @@ bool OptionParser::parse(int& argc, char* argv[])
                                 Compare(key));
 
                 if (optionIt == options.end()) {
-                        std::cout << "Unknown option '-" << key << "'" << std::endl;
+                        std::cout << argv[0] << ": unrecognized option '-"
+                                << key << "'" << std::endl;
                         return false;
                 }
 
                 Option option = *optionIt;
 
                 if (option.expectsValue && token.size() <= 2) {
-                        std::cout << "Missing value after '-" << key << "'"
-                                << std::endl;
+                        std::cout << argv[0] << ": missing value after '-"
+                                << key << "'" << std::endl;
                         return false;
                 }
 
                 if (!option.expectsValue && token.size() > 2) {
-                        std::cout << "Option '-" << key << "' doesn't allow"
-                                << " a value" << std::endl;
+                        std::cout << argv[0] << ": option '-" << key
+                                << "' doesn't allow a value" << std::endl;
                         return false;
                 }
 
