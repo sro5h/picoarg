@@ -142,6 +142,12 @@ bool OptionParser::parse(int& argc, char* argv[])
                         return false;
                 }
 
+                if (!option.expectsValue && token.size() > 2) {
+                        std::cout << "Option '-" << key << "' doesn't allow"
+                                << " a value" << std::endl;
+                        return false;
+                }
+
                 if (option.expectsValue && token.size() > 2) {
                         option.value = token.substr(2);
                 }
