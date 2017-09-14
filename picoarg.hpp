@@ -120,7 +120,7 @@ bool OptionParser::parse(int& argc, char* argv[])
 
                 if (!isOption(token)) {
                         std::cout << "Expected an option, found '" << token
-                                << "'." << std::endl;
+                                << "'" << std::endl;
                         return false;
                 }
 
@@ -136,8 +136,8 @@ bool OptionParser::parse(int& argc, char* argv[])
 
                 Option option = *optionIt;
 
-                if (option.expectsValue && token.size() < 2) {
-                        std::cout << "Missing value after '-" << key << "'."
+                if (option.expectsValue && token.size() <= 2) {
+                        std::cout << "Missing value after '-" << key << "'"
                                 << std::endl;
                         return false;
                 }
